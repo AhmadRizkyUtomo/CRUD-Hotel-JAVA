@@ -40,4 +40,8 @@ public class HotelService {
 
         hotelRepository.save(hotel);
     }
+
+    public void deleteHotel(String id) {
+        hotelRepository.deleteById(id);
+    }
 }

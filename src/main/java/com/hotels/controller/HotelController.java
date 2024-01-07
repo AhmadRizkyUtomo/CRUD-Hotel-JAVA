@@ -17,7 +17,9 @@ import com.hotels.repository.SessionRepository;
 import com.hotels.service.HotelService;
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -86,6 +88,22 @@ public class HotelController {
         Response<String> resp = Response.<String>builder().data("ok").build();
         resp.setStatus("Success");
         resp.setMessage("Success update hotel");
+
+        return resp;
+    }
+
+    @DeleteMapping(path = "/api/hotels/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Response<String> deleteHotel(@PathVariable String id, HttpServletRequest header) {
+        SessionEntity entity = checkUserSession(header);
+        if (!entity.getRole().equals(RoleAdmin)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+                    "only admin can access this endpoint");
+        }
+
+        hotelService.deleteHotel(id);
+        Response<String> resp = Response.<String>builder().data("ok").build();
+        resp.setStatus("Success");
+        resp.setMessage("Success delete hotel");
 
         return resp;
     }
