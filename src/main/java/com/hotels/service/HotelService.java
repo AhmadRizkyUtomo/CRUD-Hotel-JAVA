@@ -28,4 +28,16 @@ public class HotelService {
 
         hotelRepository.save(hotel);
     }
+
+    public void updateHotel(HotelRequest request) {
+        HotelEntity hotel = new HotelEntity();
+        hotel.setFacilities(request.getFacilities());
+        hotel.setLocation(request.getLocation());
+        hotel.setReview(request.getReview());
+        hotel.setPrice(request.getPrice());
+        hotel.setName(request.getName());
+        hotel.setId(request.getId());
+
+        hotelRepository.save(hotel);
+    }
 }

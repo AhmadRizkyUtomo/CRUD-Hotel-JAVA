@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
@@ -69,6 +70,22 @@ public class HotelController {
         Response<String> resp = Response.<String>builder().data("ok").build();
         resp.setStatus("Success");
         resp.setMessage("Success insert new date");
+
+        return resp;
+    }
+
+    @PutMapping(path = "/api/hotels", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Response<String> updateHotel(@RequestBody HotelRequest request, HttpServletRequest header) {
+        SessionEntity entity = checkUserSession(header);
+        if (!entity.getRole().equals(RoleAdmin)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+                    "only admin can access this endpoint");
+        }
+
+        hotelService.updateHotel(request);
+        Response<String> resp = Response.<String>builder().data("ok").build();
+        resp.setStatus("Success");
+        resp.setMessage("Success update hotel");
 
         return resp;
     }

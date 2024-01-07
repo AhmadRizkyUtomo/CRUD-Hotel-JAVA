@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class HotelRequest {
+    private String id;
+
     private String name;
 
     private String location;
