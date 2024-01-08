@@ -3,7 +3,9 @@ package com.hotels.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.hotels.entity.HotelEntity;
 import com.hotels.model.HotelRequest;
@@ -43,5 +45,11 @@ public class HotelService {
 
     public void deleteHotel(String id) {
         hotelRepository.deleteById(id);
+    }
+
+    public HotelEntity getDetailHotel(String id) {
+        return hotelRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+                        "wrong username or password"));
     }
 }

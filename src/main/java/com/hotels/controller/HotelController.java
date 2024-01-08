@@ -107,4 +107,20 @@ public class HotelController {
 
         return resp;
     }
+
+    @GetMapping(path = "/api/hotels/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Response<HotelEntity> getDetailHotel(@PathVariable String id, HttpServletRequest header) {
+        SessionEntity entity = checkUserSession(header);
+        if (!entity.getRole().equals(RoleAdmin)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+                    "only admin can access this endpoint");
+        }
+
+        HotelEntity detailHotel = hotelService.getDetailHotel(id);
+        Response<HotelEntity> resp = Response.<HotelEntity>builder().data(detailHotel).build();
+        resp.setStatus("Success");
+        resp.setMessage("Success get detail hotel");
+
+        return resp;
+    }
 }
