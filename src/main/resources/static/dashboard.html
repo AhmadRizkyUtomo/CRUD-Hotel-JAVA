@@ -84,7 +84,6 @@
         .create-btn {
             margin-bottom: 50px;
             background-color: #4caf50;
-            /* Add some space between buttons */
         }
 
         .create-btn:hover,
@@ -106,7 +105,7 @@
                 <th>Facilities</th>
                 <th>Price</th>
                 <th>Review</th>
-                <th>Actions</th>
+                <th class="custom-actions">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -119,6 +118,8 @@
 
     <script>
         const accessToken = localStorage.getItem('accessToken');
+        const userRole = localStorage.getItem('role');
+        const isAdmin = userRole === 'ADMIN';
 
         function createNewHotel() {
             window.location.href = 'insertHotel.html';
@@ -126,6 +127,7 @@
 
         function logout() {
             localStorage.removeItem('accessToken');
+            localStorage.removeItem('role');
             window.location.href = 'index.html';
         }
 
@@ -174,15 +176,26 @@
                         <td>${hotel.facilities}</td>
                         <td>${hotel.price}</td>
                         <td>${hotel.review}</td>
-                        <td>
-                            <button class="edit-btn" onclick="editHotel(${hotel.id})">Edit</button>
-                            <button class="delete-btn" onclick="deleteHotel(${hotel.id})">Delete</button>
-                        </td>
+                        ${isAdmin ? `<td>
+                                    <button class="edit-btn" onclick="editHotel(${hotel.id})">Edit</button>
+                                    <button class="delete-btn" onclick="deleteHotel(${hotel.id})">Delete</button>
+                                </td>` : ''}
+                    </td>
                     `;
                     tableBody.appendChild(row);
                 });
             })
             .catch(error => console.error('Error fetching data:', error));
+
+        if (!isAdmin) {
+            const actionCells = document.querySelectorAll('#hotelTable td:nth-child(7)');
+            actionCells.forEach(cell => {
+                cell.style.display = 'none';
+            });
+
+            document.querySelector('.create-btn').style.display = 'none';
+            document.querySelector('.custom-actions').style.display = 'none';
+        }
     </script>
 </body>
 

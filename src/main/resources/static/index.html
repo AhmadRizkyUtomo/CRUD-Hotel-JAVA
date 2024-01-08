@@ -96,7 +96,9 @@
                         alert('Login failed. Please check your credentials.');
                     }
                 }).then(resp => {
-                    console.log(resp.data.access_token)
+                    const role = resp.data.role;
+                    localStorage.setItem('role', role);
+
                     const accessToken = resp.data.access_token;
                     localStorage.setItem('accessToken', accessToken);
                     window.location.href = 'dashboard.html';
