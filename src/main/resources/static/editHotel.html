@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Hotel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Update Hotel</h1>
+
+    <form id="updateHotelForm">
+        <label for="id">Id:</label>
+        <input type="text" id="id" name="id" required readonly>
+        <br>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <br>
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" required>
+        <br>
+        <label for="facilities">Facilities:</label>
+        <input type="text" id="facilities" name="facilities" required>
+        <br>
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" required>
+        <br>
+        <label for="review">Review:</label>
+        <textarea id="review" name="review" rows="4" required></textarea>
+        <br>
+        <button type="button" onclick="submitForm()">Update</button>
+    </form>
+
+    <script>
+        function fetchAndPopulateData() {
+            const accessToken = localStorage.getItem('accessToken');
+
+            if (!accessToken) {
+                alert('Access token not found. Please log in.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const hotelId = urlParams.get('id');
+
+            if (!hotelId) {
+                alert('Hotel ID not found in the URL.');
+                return;
+            }
+
+            fetch(`http://localhost:8080/api/hotels/${hotelId}`, {
+                headers: {
+                    'X-Authorization-Token': accessToken
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('name').value = data.data.name;
+                    document.getElementById('location').value = data.data.location;
+                    document.getElementById('facilities').value = data.data.facilities;
+                    document.getElementById('price').value = data.data.price;
+                    document.getElementById('review').value = data.data.review;
+                    document.getElementById('id').value = data.data.id;
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function submitForm() {
+            const accessToken = localStorage.getItem('accessToken');
+
+            if (!accessToken) {
+                alert('Access token not found. Please log in.');
+                return;
+            }
+
+            const name = document.getElementById('name').value;
+            const location = document.getElementById('location').value;
+            const facilities = document.getElementById('facilities').value;
+            const price = document.getElementById('price').value;
+            const review = document.getElementById('review').value;
+            const id = document.getElementById('id').value;
+
+            const requestBody = {
+                "id": id,
+                "name": name,
+                "location": location,
+                "facilities": facilities,
+                "price": parseInt(price),
+                "review": review
+            };
+
+            fetch('http://localhost:8080/api/hotels', {
+                method: 'PUT',
+                headers: {
+                    'X-Authorization-Token': accessToken,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Hotel updated successfully!');
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        throw new Error('Failed to update the hotel.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert(error.message);
+                });
+        }
+
+        fetchAndPopulateData();
+    </script>
+</body>
+
+</html>
