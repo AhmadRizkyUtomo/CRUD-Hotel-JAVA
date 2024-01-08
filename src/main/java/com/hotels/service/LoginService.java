@@ -42,6 +42,7 @@ public class LoginService {
                 // return token
                 LoginResponse resp = new LoginResponse();
                 resp.setAccess_token(accessToken);
+                resp.setRole(auth.getRole());
 
                 return resp;
         }
